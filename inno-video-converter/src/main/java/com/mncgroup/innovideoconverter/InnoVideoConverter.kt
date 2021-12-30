@@ -19,15 +19,12 @@ class InnoVideoConverter(
     /**
      * Convert file input uri file video with yuv444p
      * @param fileUriVideo file uri of video file
+     * @param pixelFormat pixel format of filter. For ex : yuv420p, yuv422, gray etc. List name of pixel format can be founded <a href="https://ffmpeg.org/pipermail/ffmpeg-devel/2007-May/035617.html">here</a>
      */
-    fun convertYuv444p(fileUriVideo: Uri) {
+    fun convertFilterPixelFormat(fileUriVideo: Uri, pixelFormat : String) {
         val inputFile = FFmpegKitConfig.getSafParameterForRead(activity, fileUriVideo)
         val file = getFileCacheDir()
-        val exe = "-y -i " + inputFile + " -pix_fmt yuv444p " + file.absolutePath
-//            val exe = "-y -i " + fileUriVideo + " -vf scale=-1:720 " + file.absolutePath
-//                val exe = "-y -i " + fileUriVideo + " -vcodec libx265 -crf 28 " + file.absolutePath
-//                val exe = "-y -i " + fileUriVideo + " -vf scale=-1:720 -preset faster " + file.absolutePath
-
+        val exe = "-y -i " + inputFile + " -pix_fmt $pixelFormat " + file.absolutePath
         executeCommandAsync(exe, file.absolutePath)
     }
 

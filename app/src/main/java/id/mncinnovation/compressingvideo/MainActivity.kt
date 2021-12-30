@@ -111,7 +111,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnCompress.setOnClickListener {
             fileUriVideo?.let { fileUriVideo ->
-                innoVideoConverter.convertYuv444p(fileUriVideo)
+                innoVideoConverter.convertFilterPixelFormat(fileUriVideo, "yuv444p")
             }
         }
 
@@ -127,8 +127,11 @@ class MainActivity : AppCompatActivity() {
         innoVideoConverter = InnoVideoConverter(this, object : InnoVideoConverterCallback {
             override fun onProgress(progress: Boolean) {
                 if (progress) {
+                    binding.tvStateProcess.text = "Compressing file"
                     binding.pbCompress.visibility = View.VISIBLE
+                    binding.btnCompress.visibility = View.GONE
                 } else {
+                    binding.btnCompress.visibility = View.VISIBLE
                     binding.pbCompress.visibility = View.GONE
                 }
             }
@@ -136,6 +139,7 @@ class MainActivity : AppCompatActivity() {
             override fun onSuccessConverted(message: String, newUriFileConverted: String) {
                 fileUriVideoString = newUriFileConverted
                 binding.btnCompress.text = "Compressed"
+                binding.tvStateProcess.text = "File Compressed"
                 binding.btnSaveFile.visibility = View.VISIBLE
                 Toast.makeText(
                     this@MainActivity,
@@ -146,7 +150,8 @@ class MainActivity : AppCompatActivity() {
 
             override fun onErrorConvert(message: String) {
                 binding.btnCompress.isEnabled = true
-                binding.btnCompress.text = "Compress Failed"
+                binding.btnCompress.text = "Compress"
+                binding.tvStateProcess.text = "Compress Failed"
                 Log.e(TAG, "error: $message")
                 Toast.makeText(
                     this@MainActivity,
@@ -156,6 +161,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onCanceledConvert(message: String) {
+                binding.tvStateProcess.text = "Compress Canceled"
                 Log.e(TAG, "cancel: $message")
             }
         })
