@@ -16,12 +16,16 @@ class InnoVideoConverter(
     }
 
     /**
-     * Compress file input uri file video with option quality
+     * Compress file input uri file video with quality option
      * @param fileUriVideo file uri of video file
      * @param qualityOption option of video quality.
      *
      */
-    fun compressVideoQuality(fileUriVideo: Uri, qualityOption: QualityOption) {
+    fun compressVideoQuality(
+        fileUriVideo: Uri,
+        qualityOption: QualityOption,
+        scale: InnoVideoScale
+    ) {
         val inputFile = FFmpegKitConfig.getSafParameterForRead(activity, fileUriVideo)
         val file = getFileCacheDir()
         val crf = when (qualityOption) {
@@ -30,7 +34,7 @@ class InnoVideoConverter(
             QualityOption.LOW -> "28"
         }
         val exe =
-            "-y -i " + inputFile + " -vf scale=-1:720 -preset veryfast -crf $crf " + file.absolutePath
+            "-y -i " + inputFile + " -vf scale=${scale.width}:${scale.height} -preset veryfast -crf $crf " + file.absolutePath
         executeCommandAsync(exe, file.absolutePath)
     }
 

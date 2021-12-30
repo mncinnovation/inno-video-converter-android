@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.mncgroup.innovideoconverter.InnoVideoConverter
 import com.mncgroup.innovideoconverter.InnoVideoConverterCallback
+import com.mncgroup.innovideoconverter.InnoVideoScale
 import com.mncgroup.innovideoconverter.QualityOption
 import id.mncinnovation.compressingvideo.databinding.ActivityMainBinding
 import java.io.File
@@ -116,7 +117,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnCompress.setOnClickListener {
             fileUriVideo?.let { fileUriVideo ->
-                innoVideoConverter.compressVideoQuality(fileUriVideo, QualityOption.LOW)
+                innoVideoConverter.compressVideoQuality(
+                    fileUriVideo,
+                    QualityOption.LOW,
+                    InnoVideoScale(-1, 720)
+                )
             }
         }
 
