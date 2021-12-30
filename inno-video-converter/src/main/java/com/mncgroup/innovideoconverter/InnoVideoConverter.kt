@@ -3,7 +3,6 @@ package com.mncgroup.innovideoconverter
 import android.app.Activity
 import android.net.Uri
 import android.util.Log
-import com.arthenica.ffmpegkit.BuildConfig
 import com.arthenica.ffmpegkit.FFmpegKit
 import com.arthenica.ffmpegkit.FFmpegKitConfig
 import java.io.File
@@ -17,14 +16,21 @@ class InnoVideoConverter(
     }
 
     /**
-     * Convert file input uri file video with yuv444p
+     * Compress file input uri file video with option quality
      * @param fileUriVideo file uri of video file
-     * @param pixelFormat pixel format of filter. For ex : yuv420p, yuv422, gray etc. List name of pixel format can be founded <a href="https://ffmpeg.org/pipermail/ffmpeg-devel/2007-May/035617.html">here</a>
+     * @param qualityOption option of video quality.
+     *
      */
-    fun convertFilterPixelFormat(fileUriVideo: Uri, pixelFormat : String) {
+    fun compressVideoQuality(fileUriVideo: Uri, qualityOption: QualityOption) {
         val inputFile = FFmpegKitConfig.getSafParameterForRead(activity, fileUriVideo)
         val file = getFileCacheDir()
-        val exe = "-y -i " + inputFile + " -pix_fmt $pixelFormat " + file.absolutePath
+        val crf = when (qualityOption) {
+            QualityOption.HIGH -> "18"
+            QualityOption.MEDIUM -> "23"
+            QualityOption.LOW -> "28"
+        }
+        val exe =
+            "-y -i " + inputFile + " -vf scale=-1:720 -preset veryfast -crf $crf " + file.absolutePath
         executeCommandAsync(exe, file.absolutePath)
     }
 
@@ -62,18 +68,18 @@ class InnoVideoConverter(
                     when {
                         returnCode.isSuccess -> {
                             callback.onSuccessConverted(
-                                "Success converted with yuv444p",
+                                "Success compressed",
                                 filePath
                             )
                         }
                         returnCode.isError -> {
                             callback.onErrorConvert(
-                                "Error convert with yuv444p. ${session.failStackTrace}"
+                                "Error compress. ${session.logsAsString}"
                             )
                         }
                         else -> {
                             callback.onCanceledConvert(
-                                "Canceled convert with yuv444p by user"
+                                "Canceled compress by user"
                             )
                         }
                     }
@@ -97,4 +103,16 @@ interface InnoVideoConverterCallback {
     fun onSuccessConverted(message: String, newUriFileConverted: String)
     fun onErrorConvert(message: String)
     fun onCanceledConvert(message: String)
+}
+
+/**
+ * Video Quality Option for compressing the video
+ * [LOW] for low quality of video
+ * [MEDIUM] for medium quality of video
+ * [HIGH] for high quality of video.
+ */
+enum class QualityOption {
+    HIGH,
+    MEDIUM,
+    LOW
 }

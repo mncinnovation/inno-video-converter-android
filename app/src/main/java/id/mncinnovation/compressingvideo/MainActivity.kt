@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.mncgroup.innovideoconverter.InnoVideoConverter
 import com.mncgroup.innovideoconverter.InnoVideoConverterCallback
+import com.mncgroup.innovideoconverter.QualityOption
 import id.mncinnovation.compressingvideo.databinding.ActivityMainBinding
 import java.io.File
 import java.io.FileInputStream
@@ -46,8 +47,8 @@ class MainActivity : AppCompatActivity() {
                                 }
                                 `in`.close()
                                 // write the output file (You have now copied the file)
-                                out!!.flush()
-                                out.close()
+                                out?.flush()
+                                out?.close()
 
                             } catch (e: IOException) {
                                 Log.d("TAG", "Error Occured" + e.message)
@@ -109,9 +110,13 @@ class MainActivity : AppCompatActivity() {
             resultLauncherOpenFile.launch(intent)
         }
 
+        binding.btnCancel.setOnClickListener {
+            innoVideoConverter.cancel()
+        }
+
         binding.btnCompress.setOnClickListener {
             fileUriVideo?.let { fileUriVideo ->
-                innoVideoConverter.convertFilterPixelFormat(fileUriVideo, "yuv444p")
+                innoVideoConverter.compressVideoQuality(fileUriVideo, QualityOption.LOW)
             }
         }
 
@@ -127,10 +132,12 @@ class MainActivity : AppCompatActivity() {
         innoVideoConverter = InnoVideoConverter(this, object : InnoVideoConverterCallback {
             override fun onProgress(progress: Boolean) {
                 if (progress) {
+                    binding.btnCancel.visibility = View.VISIBLE
                     binding.tvStateProcess.text = "Compressing file"
                     binding.pbCompress.visibility = View.VISIBLE
                     binding.btnCompress.visibility = View.GONE
                 } else {
+                    binding.btnCancel.visibility = View.GONE
                     binding.btnCompress.visibility = View.VISIBLE
                     binding.pbCompress.visibility = View.GONE
                 }
