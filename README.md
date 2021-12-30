@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
     private fun initInnoVideoConverter() {
         innoVideoConverter = InnoVideoConverter(this, object : InnoVideoConverterCallback {
             override fun onProgress(progress: Boolean, percent: Double) {
-                
+
             }
             override fun onSuccessConverted(message: String, newUriFileConverted: String) {
                 Log.i("InnoVideoConverter", "success : $message")
@@ -81,7 +81,8 @@ class MainActivity : AppCompatActivity() {
     innoVideoConverter.compressVideoQuality(
         fileUriVideo,
         QualityOption.LOW,
-        InnoVideoScale(-2, 720)
+        InnoVideoScale(-2, 720),
+        EncodingSpeedOption.FASTER
     )
 ```
 
