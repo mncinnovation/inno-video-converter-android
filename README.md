@@ -38,7 +38,7 @@ or Maven
 </dependency>
 ```
 
-### How to Use
+### Implement the code
 
 1. Add and declare object of class InnoVideoConverter.
 
