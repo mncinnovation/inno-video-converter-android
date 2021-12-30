@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
                 innoVideoConverter.compressVideoQuality(
                     fileUriVideo,
                     QualityOption.LOW,
-                    InnoVideoScale(-1, 720)
+                    InnoVideoScale(-2, 720)
                 )
             }
         }
@@ -135,7 +135,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initInnoVideoConverter() {
         innoVideoConverter = InnoVideoConverter(this, object : InnoVideoConverterCallback {
-            override fun onProgress(progress: Boolean) {
+            override fun onProgress(progress: Boolean, percent : Double) {
+                Log.e(InnoVideoConverter.TAG, "percentProgress $percent")
                 if (progress) {
                     binding.btnCancel.visibility = View.VISIBLE
                     binding.tvStateProcess.text = "Compressing file"

@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initInnoVideoConverter() {
         innoVideoConverter = InnoVideoConverter(this, object : InnoVideoConverterCallback {
-            override fun onProgress(progress: Boolean) {
+            override fun onProgress(progress: Boolean, percent: Double) {
                 
             }
             override fun onSuccessConverted(message: String, newUriFileConverted: String) {
@@ -78,7 +78,11 @@ class MainActivity : AppCompatActivity() {
 2. Call the function of convert filter as you need from object innoVideoConverter.
 
 ```kotlin
-    innoVideoConverter.convertFilterPixelFormat(fileUriVideo, "yuv444p")
+    innoVideoConverter.compressVideoQuality(
+        fileUriVideo,
+        QualityOption.LOW,
+        InnoVideoScale(-2, 720)
+    )
 ```
 
 ## License
