@@ -21,24 +21,22 @@ class InnoVideoConverter(
      * @param fileUriVideo file uri of video file
      * @param qualityOption option of video quality.
      * @param scale scale size of video
-     *
+     * @param encodingSpeedOption encoding speed to compression ratio
      */
     fun compressVideoQuality(
         fileUriVideo: Uri,
         qualityOption: QualityOption,
-        scale: InnoVideoScale
+        scale: InnoVideoScale,
+        encodingSpeedOption: EncodingSpeedOption? = EncodingSpeedOption.MEDIUM
     ) {
         val inputFile = FFmpegKitConfig.getSafParameterForRead(activity, fileUriVideo)
         val file = getFileCacheDir()
-        val crf = when (qualityOption) {
-            QualityOption.VERY_HIGH -> "17"
-            QualityOption.HIGH -> "20"
-            QualityOption.MEDIUM -> "23"
-            QualityOption.LOW -> "25"
-            QualityOption.VERY_LOW -> "28"
-        }
+
         val exe =
-            "-y -i " + inputFile + " -vf scale=${scale.width}:${scale.height} -preset veryfast -crf $crf " + file.absolutePath
+            "-y -i " + inputFile + " -vf scale=${scale.width}:${scale.height} -preset $encodingSpeedOption -crf ${qualityOption.value} " + file.absolutePath
+        if (BuildConfig.DEBUG) {
+            Log.i(TAG, "command : $exe")
+        }
         executeCommandAsync(fileUriVideo, exe, file.absolutePath)
     }
 
@@ -133,10 +131,36 @@ interface InnoVideoConverterCallback {
  * [HIGH] for high quality of video.
  * [VERY_HIGH] for very high quality of video.
  */
-enum class QualityOption {
-    VERY_HIGH,
-    HIGH,
-    MEDIUM,
-    LOW,
-    VERY_LOW
+enum class QualityOption(val value: String) {
+    VERY_HIGH("17"),
+    HIGH("20"),
+    MEDIUM("23"),
+    LOW("25"),
+    VERY_LOW("28")
+}
+
+
+/**
+ * This is a collection of options that will provide a certain encoding speed to compression ratio.
+ * Default value is [MEDIUM].
+ * [VERY_SLOW] for very slow encoding speed
+ * [SLOWER] for slower encoding speed
+ * [SLOW] for slow encoding speed
+ * [MEDIUM] for medium encoding speed.
+ * [FAST] for fast encoding speed.
+ * [FASTER] for faster encoding speed.
+ * [VERY_FAST] for very fast encoding speed.
+ * [SUPER_FAST] for super fast encoding speed.
+ * [ULTRA_FAST] for ultra fast encoding speed.
+ */
+enum class EncodingSpeedOption(val value: String) {
+    ULTRA_FAST("ultrafast"),
+    SUPER_FAST("superfast"),
+    VERY_FAST("veryfast"),
+    FASTER("faster"),
+    FAST("fast"),
+    MEDIUM("medium"),
+    SLOW("slow"),
+    SLOWER("slower"),
+    VERY_SLOW("veryslow")
 }

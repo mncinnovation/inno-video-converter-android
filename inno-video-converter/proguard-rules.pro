@@ -33,4 +33,6 @@
 
 -keep class com.mncgroup.innovideoconverter.QualityOption { * ; }
 
+-keep class com.mncgroup.innovideoconverter.EncodingSpeedOption { *; }
+
 -keep class com.mncgroup.innovideoconverter.InnoVideoScale { *; }

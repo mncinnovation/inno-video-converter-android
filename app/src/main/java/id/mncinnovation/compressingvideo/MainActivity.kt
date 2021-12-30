@@ -9,10 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import com.mncgroup.innovideoconverter.InnoVideoConverter
-import com.mncgroup.innovideoconverter.InnoVideoConverterCallback
-import com.mncgroup.innovideoconverter.InnoVideoScale
-import com.mncgroup.innovideoconverter.QualityOption
+import com.mncgroup.innovideoconverter.*
 import id.mncinnovation.compressingvideo.databinding.ActivityMainBinding
 import java.io.File
 import java.io.FileInputStream
@@ -120,7 +117,8 @@ class MainActivity : AppCompatActivity() {
                 innoVideoConverter.compressVideoQuality(
                     fileUriVideo,
                     QualityOption.LOW,
-                    InnoVideoScale(-2, 720)
+                    InnoVideoScale(-2, 720),
+                    EncodingSpeedOption.FASTER
                 )
             }
         }
@@ -135,7 +133,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initInnoVideoConverter() {
         innoVideoConverter = InnoVideoConverter(this, object : InnoVideoConverterCallback {
-            override fun onProgress(progress: Boolean, percent : Double) {
+            override fun onProgress(progress: Boolean, percent: Double) {
                 Log.e(InnoVideoConverter.TAG, "percentProgress $percent")
                 if (progress) {
                     binding.btnCancel.visibility = View.VISIBLE
