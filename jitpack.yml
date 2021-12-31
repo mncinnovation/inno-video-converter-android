@@ -1,3 +1,3 @@
 install:
-  - ./gradlew :moka:build :inno-video-converter:publishToMavenLocal -x :inno-video-converter:test
+  - ./gradlew :inno-video-converter:build :inno-video-converter:publishToMavenLocal -x :inno-video-converter:test
   - find . -name "*.aar"
