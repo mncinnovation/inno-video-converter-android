@@ -24,6 +24,7 @@ class InnoVideoConverter(
      * @param qualityOption option of video quality.
      * @param scale scale size of video
      * @param encodingSpeedOption encoding speed to compression ratio
+     * @param callback is an callback of compression process
      */
     fun compressVideoQuality(
         tag: Int,
@@ -67,7 +68,6 @@ class InnoVideoConverter(
             }
         }
         indexFounded?.let { sessionTag.removeAt(it) }
-
     }
 
     private fun getFileCacheDir(): File {
