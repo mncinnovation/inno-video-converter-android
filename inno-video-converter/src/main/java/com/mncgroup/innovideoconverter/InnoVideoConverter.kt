@@ -33,7 +33,7 @@ class InnoVideoConverter(
         val file = getFileCacheDir()
 
         val exe =
-            "-y -i " + inputFile + " -vf scale=${scale.width}:${scale.height} -preset $encodingSpeedOption -crf ${qualityOption.value} " + file.absolutePath
+            "-y -i " + inputFile + " -vf scale=${scale.width}:${scale.height} -preset ${encodingSpeedOption?.value} -crf ${qualityOption.value} " + file.absolutePath
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "command : $exe")
         }
@@ -143,9 +143,9 @@ enum class QualityOption(val value: String) {
 /**
  * This is a collection of options that will provide a certain encoding speed to compression ratio.
  * Default value is [MEDIUM].
- * [VERY_SLOW] for very slow encoding speed
- * [SLOWER] for slower encoding speed
- * [SLOW] for slow encoding speed
+ * [VERY_SLOW] for very slow encoding speed.
+ * [SLOWER] for slower encoding speed.
+ * [SLOW] for slow encoding speed.
  * [MEDIUM] for medium encoding speed.
  * [FAST] for fast encoding speed.
  * [FASTER] for faster encoding speed.
