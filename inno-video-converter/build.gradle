@@ -56,6 +56,8 @@ project.afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
+                groupId 'com.github.mncinnovation'
+                artifactId 'inno-video-converter-android'
                 from components.release
             }
         }
