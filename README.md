@@ -55,22 +55,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initInnoVideoConverter() {
-        innoVideoConverter = InnoVideoConverter(this, object : InnoVideoConverterCallback {
-            override fun onProgress(progress: Boolean, percent: Double) {
-
-            }
-            override fun onSuccessConverted(message: String, newUriFileConverted: String) {
-                Log.i("InnoVideoConverter", "success : $message")
-            }
-
-            override fun onErrorConvert(message: String) {
-                Log.i("InnoVideoConverter", "error : $message")
-            }
-
-            override fun onCanceledConvert(message: String) {
-                Log.i("InnoVideoConverter", "cancelled : $message")
-            }
-        })
+        innoVideoConverter = InnoVideoConverter(this)
     }
 }
 ```
@@ -79,10 +64,27 @@ class MainActivity : AppCompatActivity() {
 
 ```kotlin
     innoVideoConverter.compressVideoQuality(
+        1,
         fileUriVideo,
         QualityOption.LOW,
         InnoVideoScale(-2, 720),
-        EncodingSpeedOption.FASTER
+        EncodingSpeedOption.FASTER,
+        object : InnoVideoConverterCallback {
+            override fun onProgress(progress: Boolean, percent: Double) {
+    
+            }
+            override fun onSuccessConverted(message: String, newUriFileConverted: String) {
+                Log.i("InnoVideoConverter", "success : $message")
+            }
+    
+            override fun onErrorConvert(message: String) {
+                Log.i("InnoVideoConverter", "error : $message")
+            }
+    
+            override fun onCanceledConvert(message: String) {
+                Log.i("InnoVideoConverter", "cancelled : $message")
+            }
+        }
     )
 ```
 

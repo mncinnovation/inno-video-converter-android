@@ -46,7 +46,7 @@ class InnoVideoConverter(
     }
 
     /**
-     * cancel existing process
+     * cancel all existing process
      */
     fun cancel() {
         FFmpegKit.cancel()
