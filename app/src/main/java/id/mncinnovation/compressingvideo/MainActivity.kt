@@ -109,17 +109,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnCancel.setOnClickListener {
-            innoVideoConverter.cancel()
+            innoVideoConverter.cancel(1)
         }
 
         binding.btnCompress.setOnClickListener {
             fileUriVideo?.let { fileUriVideo ->
-                innoVideoConverter.compressVideoQuality(
-                    fileUriVideo,
-                    QualityOption.LOW,
-                    InnoVideoScale(-2, 720),
-                    EncodingSpeedOption.FASTER
-                )
+                compress(fileUriVideo)
             }
         }
 
@@ -131,51 +126,62 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initInnoVideoConverter() {
-        innoVideoConverter = InnoVideoConverter(this, object : InnoVideoConverterCallback {
-            override fun onProgress(progress: Boolean, percent: Double) {
-                Log.e(InnoVideoConverter.TAG, "percentProgress $percent")
-                if (progress) {
-                    binding.btnCancel.visibility = View.VISIBLE
-                    binding.tvStateProcess.text = "Compressing file"
-                    binding.pbCompress.visibility = View.VISIBLE
-                    binding.btnCompress.visibility = View.GONE
-                } else {
-                    binding.btnCancel.visibility = View.GONE
-                    binding.btnCompress.visibility = View.VISIBLE
-                    binding.pbCompress.visibility = View.GONE
+    private fun compress(fileUriVideo : Uri){
+        innoVideoConverter.compressVideoQuality(
+            1,
+            fileUriVideo,
+            QualityOption.LOW,
+            InnoVideoScale(-2, 720),
+            EncodingSpeedOption.FASTER,
+            object : InnoVideoConverterCallback {
+                override fun onProgress(progress: Boolean, percent: Double) {
+                    Log.e(InnoVideoConverter.TAG, "percentProgress $percent")
+                    if (progress) {
+                        binding.btnCancel.visibility = View.VISIBLE
+                        binding.tvStateProcess.text = "Compressing file"
+                        binding.pbCompress.visibility = View.VISIBLE
+                        binding.btnCompress.visibility = View.GONE
+                    } else {
+                        binding.btnCancel.visibility = View.GONE
+                        binding.btnCompress.visibility = View.VISIBLE
+                        binding.pbCompress.visibility = View.GONE
+                    }
+                }
+
+                override fun onSuccessConverted(message: String, newUriFileConverted: String) {
+                    fileUriVideoString = newUriFileConverted
+                    binding.btnCompress.text = "Compressed"
+                    binding.tvStateProcess.text = "File Compressed"
+                    binding.btnSaveFile.visibility = View.VISIBLE
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Compress success",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                override fun onErrorConvert(message: String) {
+                    binding.btnCompress.isEnabled = true
+                    binding.btnCompress.text = "Compress"
+                    binding.tvStateProcess.text = "Compress Failed"
+                    Log.e(TAG, "error: $message")
+                    Toast.makeText(
+                        this@MainActivity,
+                        message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                override fun onCanceledConvert(message: String) {
+                    binding.tvStateProcess.text = "Compress Canceled"
+                    Log.e(TAG, "cancel: $message")
                 }
             }
+        )
+    }
 
-            override fun onSuccessConverted(message: String, newUriFileConverted: String) {
-                fileUriVideoString = newUriFileConverted
-                binding.btnCompress.text = "Compressed"
-                binding.tvStateProcess.text = "File Compressed"
-                binding.btnSaveFile.visibility = View.VISIBLE
-                Toast.makeText(
-                    this@MainActivity,
-                    "Compress success",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
-            override fun onErrorConvert(message: String) {
-                binding.btnCompress.isEnabled = true
-                binding.btnCompress.text = "Compress"
-                binding.tvStateProcess.text = "Compress Failed"
-                Log.e(TAG, "error: $message")
-                Toast.makeText(
-                    this@MainActivity,
-                    message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
-            override fun onCanceledConvert(message: String) {
-                binding.tvStateProcess.text = "Compress Canceled"
-                Log.e(TAG, "cancel: $message")
-            }
-        })
+    private fun initInnoVideoConverter() {
+        innoVideoConverter = InnoVideoConverter(this)
     }
 
     private fun createFile(fileName: String?) {

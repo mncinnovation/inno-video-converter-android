@@ -9,25 +9,29 @@ import com.arthenica.ffmpegkit.FFmpegKitConfig
 import java.io.File
 
 class InnoVideoConverter(
-    private val activity: Activity,
-    private val callback: InnoVideoConverterCallback
+    private val activity: Activity
 ) {
+    private var sessionTag = mutableListOf<Map<Int, Long>>()
+
     companion object {
         const val TAG = "InnoVideoConverter"
     }
 
     /**
      * Compress file input uri file video with quality option
+     * @param tag is an unique number identifier for compression process
      * @param fileUriVideo file uri of video file
      * @param qualityOption option of video quality.
      * @param scale scale size of video
      * @param encodingSpeedOption encoding speed to compression ratio
      */
     fun compressVideoQuality(
+        tag: Int,
         fileUriVideo: Uri,
         qualityOption: QualityOption,
         scale: InnoVideoScale,
-        encodingSpeedOption: EncodingSpeedOption? = EncodingSpeedOption.MEDIUM
+        encodingSpeedOption: EncodingSpeedOption? = EncodingSpeedOption.MEDIUM,
+        callback: InnoVideoConverterCallback
     ) {
         val inputFile = FFmpegKitConfig.getSafParameterForRead(activity, fileUriVideo)
         val file = getFileCacheDir()
@@ -37,7 +41,7 @@ class InnoVideoConverter(
         if (BuildConfig.DEBUG) {
             Log.i(TAG, "command : $exe")
         }
-        executeCommandAsync(fileUriVideo, exe, file.absolutePath)
+        executeCommandAsync(tag, fileUriVideo, exe, file.absolutePath, callback)
     }
 
     /**
@@ -45,6 +49,25 @@ class InnoVideoConverter(
      */
     fun cancel() {
         FFmpegKit.cancel()
+        sessionTag.clear()
+    }
+
+    /**
+     * cancel compression process by spesific tag
+     * @param tag is and unique number of compression process
+     */
+    fun cancel(tag: Int) {
+        var indexFounded: Int? = null
+        for (i in 0 until sessionTag.size) {
+            if (sessionTag[i].containsKey(tag)) {
+                sessionTag[i][tag]?.let { sessionId ->
+                    indexFounded = i
+                    FFmpegKit.cancel(sessionId)
+                }
+            }
+        }
+        indexFounded?.let { sessionTag.removeAt(it) }
+
     }
 
     private fun getFileCacheDir(): File {
@@ -52,12 +75,19 @@ class InnoVideoConverter(
         return File(folder, System.currentTimeMillis().toString() + ".mp4")
     }
 
-    private fun executeCommandAsync(fileUriVideo: Uri, command: String, filePath: String) {
+    private fun executeCommandAsync(
+        tag: Int,
+        fileUriVideo: Uri,
+        command: String,
+        filePath: String,
+        callback: InnoVideoConverterCallback
+    ) {
         try {
             val duration = MediaPlayer.create(activity, fileUriVideo).duration.toDouble()
 
             callback.onProgress(true, 0.0)
-            FFmpegKit.executeAsync(command,
+
+            val sessionExe = FFmpegKit.executeAsync(command,
                 { session ->
                     val state = session.state
                     val returnCode = session.returnCode
@@ -108,11 +138,17 @@ class InnoVideoConverter(
                     Log.i(TAG, "STATS : $it")
                 }
             }
+            Log.i(TAG, "sessionId: ${sessionExe.sessionId}")
+
+            sessionTag.add(
+                mapOf(
+                    tag to sessionExe.sessionId
+                )
+            )
         } catch (e: Exception) {
             callback.onErrorConvert(e.message ?: e.localizedMessage ?: e.toString())
             e.printStackTrace()
         }
-
     }
 }
 

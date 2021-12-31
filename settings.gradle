@@ -1,3 +1,2 @@
-rootProject.name = "Compressing Video"
 include ':app'
 include ':inno-video-converter'
