@@ -17,7 +17,7 @@ allprojects {
 }
 
 dependencies {
-  implementation 'com.github.mncinnovation:inno-video-converter-android:0.1.0'
+  implementation 'com.github.mncinnovation:inno-video-converter-android:0.1.6'
 }
 ```
 
@@ -34,7 +34,7 @@ or Maven
 <dependency>
   <groupId>com.github.mncinnovation</groupId>
   <artifactId>inno-video-converter-android</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.6</version>
 </dependency>
 ```
 
