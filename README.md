@@ -89,14 +89,10 @@ class MainActivity : AppCompatActivity() {
 ```
 3. To cancel converting/ compression process, call ``cancel`` to cancel all of existing process or ``cancel(tag)`` to cancel specific process by given tag.
 ```kotlin
-    btnCancel.setOnClickListener {
       innoVideoConverter.cancel()
-    }
 ```
 ```kotlin
-    btnCancel.setOnClickListener {
       innoVideoConverter.cancel(1)
-    }
 ```
 
 ## License
